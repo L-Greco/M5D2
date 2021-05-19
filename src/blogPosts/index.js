@@ -80,8 +80,8 @@ blogPostsRouter.put("/:blogId", (req, res, next) => {
         const blogs = getBlogPosts()
         const blog = blogs.find(blog => blog._id === req.params.blogId)
         if (blog) {
-            const remainingBlogs = blogs.filter(blog._id !== req.params.blogId)
-            const editedBlog = { ...req.body, _id: req.params.blogId }
+            const remainingBlogs = blogs.filter(blog => blog._id !== req.params.blogId)
+            const editedBlog = { _id: req.params.blogId, ...req.body }
             remainingBlogs.push(editedBlog)
             fs.writeFileSync(blogPostsJsonPath, JSON.stringify(remainingBlogs))
             res.send(editedBlog)
