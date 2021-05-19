@@ -54,7 +54,7 @@ authorsRoutes.get("/", (request, response) => {
     // 1.read authors.json content
     const contentAsAbuffer = fs.readFileSync(authorJSONPath) // we get back a buffer which is MACHINE READABLE
     const authors = JSON.parse(contentAsAbuffer) // we  convert into a JSON object
-
+    // console.log(authors);
     response.send(authors)
 
 })
@@ -73,5 +73,25 @@ authorsRoutes.get("/:id", (request, response) => {
     response.send(author)
 })
 
+authorsRoutes.put("/:id", (req, res) => {
+    // 1. read the old content of the file
+    const authors = JSON.parse(fs.readFileSync(authorJSONPath).toString())
+
+    // 2. modify the specified author
+
+    const remainingAuthors = authors.filter(author => author._id !== req.params.id)
+
+    const updatedAuthor = { ...req.body, _id: req.params.id }
+
+    remainingAuthors.push(updatedAuthor)
+
+    // 3. write the file with the updated list
+    fs.writeFileSync(authorJSONPath, JSON.stringify(remainingAuthors))
+    // 4. send a proper response
+
+    res.send(updatedAuthor)
+})
+
+// n
 
 export default authorsRoutes
