@@ -13,6 +13,9 @@ import { fileURLToPath } from "url" // core module
 import { dirname, join } from "path" // core module
 import uniqid from "uniqid" // 3rd party module
 import { getAuthors, writeAuthors } from "../library/fs-tools.js"
+import multer from "multer"
+import { writeAuthorsPictures } from "../library/fs-tools.js"
+
 
 
 
@@ -98,6 +101,23 @@ authorsRoutes.put("/:id", async (req, res) => {
 
     res.send(updatedAuthor)
 })
+authorsRoutes.put("/:id/uploadAvatar", multer().single("avatar"), async (req, res, next) => {
+
+    try {
+        const authors = await getAuthors()
+        const author = authors.find(author => author._id === req.params.id)
+        if (author) {
+            await writeAuthorsPictures(`${req.params.id}.jpg`, req.file.buffer)
+            res.send("Image is uploaded!")
+        } else {
+            next(createError(404, `Author with id: ${req.params.id} not found!`))
+        }
+
+
+    } catch (error) {
+        next(error)
+    }
+})
 
 authorsRoutes.delete("/:id", async (req, res, next) => {
     try {
@@ -108,7 +128,7 @@ authorsRoutes.delete("/:id", async (req, res, next) => {
             writeAuthors(filteredAuthors)
             res.status(204).send(`author with id : ${req.params.id} is deleted`)
         } else {
-            next(createError(404, `Comments with id: ${req.params.blogId} not found!`))
+            next(createError(404, `Comments with id: ${req.params.id} not found!`))
         }
     } catch (error) {
         next(error)
