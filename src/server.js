@@ -14,7 +14,21 @@ server.use(express.static(publicPath))
 const port = process.env.PORT || 3001 // loading the environment variable called PORT, contained in .env file
 
 server.use(express.json()) // If I do not specify this line of code BEFORE the routes, all the request bodies are going to be undefined
-server.use(cors())
+const whiteList = ["http://localhost:3000"]
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (whiteList.find(url => url === origin)) {
+            callback(null, true)
+        }
+        else {
+            const error = new Error("Cors Problems")
+            error.status = 403
+            callback(error)
+        }
+
+    }
+}
+server.use(cors(corsOptions))
 server.use("/authors", authorsRoutes)
 server.use("/blogPosts", blogPostsRouter)
 
