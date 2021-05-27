@@ -14,7 +14,7 @@ server.use(express.static(publicPath))
 const port = process.env.PORT || 3001 // loading the environment variable called PORT, contained in .env file
 
 server.use(express.json()) // If I do not specify this line of code BEFORE the routes, all the request bodies are going to be undefined
-const whiteList = ["http://localhost:3000", "https://kostasmodule5api.herokuapp.com/"]
+const whiteList = ["http://localhost:3000",]
 const corsOptions = {
     origin: (origin, callback) => {
         if (whiteList.find(url => url === origin)) {

@@ -101,6 +101,8 @@ authorsRoutes.put("/:id", async (req, res) => {
 
     res.send(updatedAuthor)
 })
+
+
 authorsRoutes.put("/:id/uploadAvatar", multer().single("avatar"), async (req, res, next) => {
 
     try {
