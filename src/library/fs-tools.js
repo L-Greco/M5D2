@@ -22,3 +22,6 @@ export const writeAuthors = async (content) => await writeJSON(authorsPath, cont
 // WRITE PICTURES 
 export const writeAuthorsPictures = async (fileName, content) => await writeFile(join(authorsImg, fileName), content)
 export const writeBlogPostsPictures = async (fileName, content) => await writeFile(join(blogPostsImg, fileName), content)
+
+// STREAMS 
+export const getAuthorsReadStream = () => fs.createReadStream(authorsPath)

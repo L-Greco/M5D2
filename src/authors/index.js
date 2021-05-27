@@ -15,7 +15,9 @@ import uniqid from "uniqid" // 3rd party module
 import { getAuthors, writeAuthors } from "../library/fs-tools.js"
 import multer from "multer"
 import { writeAuthorsPictures } from "../library/fs-tools.js"
-
+import { Transform } from "json2csv" // the library that transforms json to csv!
+import { getAuthorsReadStream } from "../library/fs-tools.js"
+import { pipeline } from "stream"
 
 
 
@@ -67,6 +69,23 @@ authorsRoutes.get("/", async (request, response) => {
     response.send(authors)
 
 })
+
+authorsRoutes.get("/ToCsv"), async (req, res, next) => {
+    try {
+        const fields = ["name", "_id", "email"]
+        const json2csv = new Transform({ fields })
+        res.setHeader("Content-Disposition", `attachment; filename=authors.csv`)
+        const authorsStream = getAuthorsReadStream()
+        pipeline(authorsStream, json2csv, res, err => {
+            if (err) {
+                console.error(err);
+                next(err)
+            }
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 authorsRoutes.get("/:id", async (request, response) => {
     console.log(request.params)
