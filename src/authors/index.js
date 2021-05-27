@@ -70,12 +70,14 @@ authorsRoutes.get("/", async (request, response) => {
 
 })
 
-authorsRoutes.get("/ToCsv"), async (req, res, next) => {
+authorsRoutes.get("/csv"), (req, res, next) => {
     try {
         const fields = ["name", "_id", "email"]
-        const json2csv = new Transform({ fields })
+        const opt = { fields }
+        const json2csv = new Transform(opt)
         res.setHeader("Content-Disposition", `attachment; filename=authors.csv`)
         const authorsStream = getAuthorsReadStream()
+        console.log(authorsStream);
         pipeline(authorsStream, json2csv, res, err => {
             if (err) {
                 console.error(err);
@@ -88,17 +90,20 @@ authorsRoutes.get("/ToCsv"), async (req, res, next) => {
 }
 
 authorsRoutes.get("/:id", async (request, response) => {
-    console.log(request.params)
+    if (request.params !== `csv`) {
+        console.log(request.params)
 
-    // 1. read the content of the file
-    // const authors = JSON.parse(fs.readFileSync(authorJSONPath).toString())
-    const authors = await getAuthors()
-    // 2. find the one with the correspondant id
+        // 1. read the content of the file
+        // const authors = JSON.parse(fs.readFileSync(authorJSONPath).toString())
+        const authors = await getAuthors()
+        // 2. find the one with the correspondant id
 
-    const author = authors.find(s => s._id === request.params.id)
+        const author = authors.find(s => s._id === request.params.id)
 
-    // 3. send it as a response
-    response.send(author)
+        // 3. send it as a response
+        response.send(author)
+    }
+
 })
 
 authorsRoutes.put("/:id", async (req, res) => {
